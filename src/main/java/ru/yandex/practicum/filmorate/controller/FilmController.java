@@ -20,13 +20,13 @@ public class FilmController extends AbstractController<Film> {
 
     @Override
     public void updateFields(Film film) {
-        if (film.getDescription() != null) {
-            log.debug("film with id={}, had description= {} now it is {}", film.getId(), model.get(film.getId()).getDescription(), film.getDescription());
-            model.get(film.getId()).setDescription(film.getDescription());
-        }
         if (film.getName() != null) {
             log.debug("film with id={}, had name= {} now it is {}", film.getId(), model.get(film.getId()).getName(), film.getName());
             model.get(film.getId()).setName(film.getName());
+        }
+        if (film.getDescription() != null) {
+            log.debug("film with id={}, had description= {} now it is {}", film.getId(), model.get(film.getId()).getDescription(), film.getDescription());
+            model.get(film.getId()).setDescription(film.getDescription());
         }
         if (film.getDuration() != null) {
             log.debug("film with id={}, had duration= {} now it is {}", film.getId(), model.get(film.getId()).getDuration(), film.getDuration());
