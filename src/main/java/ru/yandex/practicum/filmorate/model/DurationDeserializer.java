@@ -11,7 +11,7 @@ public class DurationDeserializer extends JsonDeserializer<Duration> {
 
     @Override
     public Duration deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        long seconds = p.getLongValue(); // assumes the JSON field is a number
-        return Duration.ofMinutes(seconds);
+        long minutes = p.getLongValue();
+        return Duration.ofMinutes(minutes);
     }
 }

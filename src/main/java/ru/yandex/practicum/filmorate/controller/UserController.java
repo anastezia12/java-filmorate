@@ -24,12 +24,8 @@ public class UserController extends AbstractController<User> {
             log.debug("User with id={}, had email= {} now it is {}", user.getId(), model.get(user.getId()).getEmail(), user.getEmail());
             foundUser.setEmail(user.getEmail());
         }
-
-        if (user.getName() != null) {
-            nameDecider(user);
-            log.debug("User with id={}, had name= {} now it is {}", user.getId(), model.get(user.getId()).getName(), user.getName());
-            foundUser.setName(user.getName());
-        }
+        nameDecider(user);
+        foundUser.setName(user.getName());
         if (user.getLogin() != null) {
             log.debug("User with id={}, had login= {} now it is {}", user.getId(), model.get(user.getId()).getLogin(), user.getLogin());
             foundUser.setLogin(user.getLogin());
