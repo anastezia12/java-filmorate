@@ -1,0 +1,60 @@
+package ru.yandex.practicum.filmorate.controllerTest;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.model.User;
+
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class UserControllerTest {
+    private static User user;
+    private UserController userController;
+
+    @BeforeAll
+    public static void userSetUp() {
+        user = new User();
+        user.setEmail("new@email.com");
+        user.setLogin("login");
+        user.setName("name");
+        user.setBirthday(LocalDate.now().minusDays(10));
+    }
+
+    @BeforeEach
+    public void setUp() {
+        userController = new UserController();
+    }
+
+    @Test
+    public void canAddCorrectUser() {
+        User postedUser = userController.post(user);
+        user.setId(1L);
+        assertEquals(user, postedUser);
+    }
+
+    @Test
+    public void canUpdateExistingUser() {
+        userController.post(user);
+        user.setId(1L);
+        user.setName("New name");
+        assertEquals(user, userController.update(user));
+    }
+
+    @Test
+    public void canReturnEmptyListWhenNoUsers() {
+        assertTrue(userController.getAll().isEmpty());
+    }
+
+    @Test
+    public void canReturnUsersWithMultipleUsers() {
+        userController.post(user);
+        userController.post(user);
+        userController.post(user);
+        assertEquals(3, userController.getAll().size());
+        assertTrue(userController.getAll().stream().allMatch(x -> x.getName().equals("name")));
+    }
+}
