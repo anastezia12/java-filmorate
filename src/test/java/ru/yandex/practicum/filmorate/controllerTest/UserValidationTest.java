@@ -100,7 +100,7 @@ public class UserValidationTest {
     }
 
     @Test
-    public void LoginWithSpacesShouldFail() {
+    public void loginWithSpacesShouldFail() {
         user.setEmail("null now");
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertFalse(violations.isEmpty());
