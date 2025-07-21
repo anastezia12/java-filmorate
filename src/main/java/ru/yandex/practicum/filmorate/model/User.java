@@ -33,20 +33,4 @@ public class User {
         this.name = (name == null || name.isBlank()) ? login : name;
         this.birthday = birthday;
     }
-
-    @JsonCreator
-    public User(
-            @JsonProperty("id") Long id,
-            @JsonProperty("email") String email,
-            @JsonProperty("login") String login,
-            @JsonProperty("name") String name,
-            @JsonProperty("birthday") LocalDate birthday
-    ) {
-        this.id = id;
-        this.email = email;
-        this.login = login;
-        this.name = (name == null || name.isBlank()) ? login : name;
-        this.birthday = birthday;
-    }
-
 }
