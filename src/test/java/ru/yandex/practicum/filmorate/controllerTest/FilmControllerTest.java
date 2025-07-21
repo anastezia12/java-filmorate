@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +19,7 @@ public class FilmControllerTest {
     public static void filmSetUp() {
         film = new Film();
         film.setName("film");
-        film.setDuration(Duration.ofMinutes(30));
+        film.setDuration(30);
         film.setReleaseDate(LocalDate.now());
         film.setDescription("description");
     }

@@ -26,7 +26,6 @@ public abstract class AbstractController<T> {
 
     public abstract Long getId(T object);
 
-    public abstract void putObj(T object);
 
     @GetMapping
     public Collection<T> getAll() {
@@ -38,7 +37,6 @@ public abstract class AbstractController<T> {
         log.debug("Started adding {}", object.getClass());
         Long id = getNextId();
         setId(id, object);
-        putObj(object);
         model.put(id, object);
         log.info("Successfully added {} with id= {}", object.getClass(), id);
         return object;
@@ -51,13 +49,14 @@ public abstract class AbstractController<T> {
             log.warn("UpdateFailed: id = null");
             throw new ValidationException("Id should be present");
         }
-        if (model.containsKey(getId(object))) {
-            updateFields(object);
-            log.info("Successfully updated {} with id={} ", object.getClass(), id);
-            return model.get(id);
+
+        if (!model.containsKey(getId(object))) {
+            log.warn("id={} is not found in model", id);
+            throw new ValidationException("There are no such id=" + id);
         }
-        log.warn("id={} is not found in model", id);
-        throw new ValidationException("There are no such id=" + id);
+        updateFields(object);
+        log.info("Successfully updated {} with id={} ", object.getClass(), id);
+        return model.get(id);
     }
 
 

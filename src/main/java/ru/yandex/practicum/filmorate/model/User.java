@@ -1,10 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.*;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.anotations.NoSpaces;
 
 import java.time.LocalDate;
 
@@ -14,11 +13,40 @@ public class User {
     @NotNull
     @Email
     private String email;
-    @NotNull
-    @NoSpaces
+    @NotBlank
+    @Pattern(regexp = "^[^\\s]+$", message = "Login must not contain spaces")
     private String login;
     private String name;
     @NotNull
     @Past
     private LocalDate birthday;
+
+    @JsonCreator
+    public User(
+            @JsonProperty("email") String email,
+            @JsonProperty("login") String login,
+            @JsonProperty("name") String name,
+            @JsonProperty("birthday") LocalDate birthday
+    ) {
+        this.email = email;
+        this.login = login;
+        this.name = (name == null || name.isBlank()) ? login : name;
+        this.birthday = birthday;
+    }
+
+    @JsonCreator
+    public User(
+            @JsonProperty("id") Long id,
+            @JsonProperty("email") String email,
+            @JsonProperty("login") String login,
+            @JsonProperty("name") String name,
+            @JsonProperty("birthday") LocalDate birthday
+    ) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = (name == null || name.isBlank()) ? login : name;
+        this.birthday = birthday;
+    }
+
 }

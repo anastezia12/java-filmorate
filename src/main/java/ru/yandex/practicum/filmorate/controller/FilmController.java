@@ -20,21 +20,20 @@ public class FilmController extends AbstractController<Film> {
 
     @Override
     public void updateFields(Film film) {
-        if (film.getName() != null) {
-            log.debug("film with id={}, had name= {} now it is {}", film.getId(), model.get(film.getId()).getName(), film.getName());
-            model.get(film.getId()).setName(film.getName());
-        }
+        Film existingFilm = model.get(film.getId());
+        log.debug("film with id={}, had name= {} now it is {}", film.getId(), existingFilm.getName(), film.getName());
+        existingFilm.setName(film.getName());
         if (film.getDescription() != null) {
-            log.debug("film with id={}, had description= {} now it is {}", film.getId(), model.get(film.getId()).getDescription(), film.getDescription());
-            model.get(film.getId()).setDescription(film.getDescription());
+            log.debug("film with id={}, had description= {} now it is {}", film.getId(), existingFilm.getDescription(), film.getDescription());
+            existingFilm.setDescription(film.getDescription());
         }
         if (film.getDuration() != null) {
-            log.debug("film with id={}, had duration= {} now it is {}", film.getId(), model.get(film.getId()).getDuration(), film.getDuration());
-            model.get(film.getId()).setDuration(film.getDuration());
+            log.debug("film with id={}, had duration= {} now it is {}", film.getId(), existingFilm.getDuration(), film.getDuration());
+            existingFilm.setDuration(film.getDuration());
         }
         if (film.getReleaseDate() != null) {
-            log.debug("film with id={}, had ReleaseDate= {} now it is {}", film.getId(), model.get(film.getId()).getReleaseDate(), film.getReleaseDate());
-            model.get(film.getId()).setReleaseDate(film.getReleaseDate());
+            log.debug("film with id={}, had ReleaseDate= {} now it is {}", film.getId(), existingFilm.getReleaseDate(), film.getReleaseDate());
+            existingFilm.setReleaseDate(film.getReleaseDate());
         }
     }
 
@@ -43,8 +42,5 @@ public class FilmController extends AbstractController<Film> {
         return film.getId();
     }
 
-    @Override
-    public void putObj(Film object) {
-    }
 
 }

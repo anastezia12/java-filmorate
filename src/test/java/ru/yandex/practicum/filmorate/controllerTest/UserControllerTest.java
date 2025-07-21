@@ -17,11 +17,7 @@ public class UserControllerTest {
 
     @BeforeAll
     public static void userSetUp() {
-        user = new User();
-        user.setEmail("new@email.com");
-        user.setLogin("login");
-        user.setName("name");
-        user.setBirthday(LocalDate.now().minusDays(10));
+        user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
     }
 
     @BeforeEach
@@ -42,6 +38,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setName("New name");
         assertEquals(user, userController.update(user));
+        assertEquals(1, userController.getAll().size());
     }
 
     @Test
