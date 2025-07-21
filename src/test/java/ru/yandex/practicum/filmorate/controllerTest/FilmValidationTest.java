@@ -42,7 +42,7 @@ public class FilmValidationTest {
     }
 
     @Test
-    public void DescriptionMaxLengthShouldSuccesses() {
+    public void descriptionMaxLengthShouldSuccesses() {
         film.setDescription("r".repeat(200));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty());
@@ -84,7 +84,7 @@ public class FilmValidationTest {
     }
 
     @Test
-    public void LongDescriptionShouldFail() {
+    public void longDescriptionShouldFail() {
         film.setDescription("a".repeat(201));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty());
