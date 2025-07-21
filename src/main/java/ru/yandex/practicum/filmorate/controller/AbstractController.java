@@ -38,6 +38,7 @@ public abstract class AbstractController<T> {
         log.debug("Started adding {}", object.getClass());
         Long id = getNextId();
         setId(id, object);
+        putObj(object);
         model.put(id, object);
         log.info("Successfully added {} with id= {}", object.getClass(), id);
         return object;
