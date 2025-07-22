@@ -4,7 +4,6 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -17,18 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FilmValidationTest {
 
-    private static Validator validator;
-    private static Film film = new Film();
-
-    @BeforeAll
-    public static void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-
-    }
+    private Validator validator;
+    private Film film = new Film();
 
     @BeforeEach
     public void setUpFilm() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
         film.setName("name");
         film.setDescription("description");
         film.setReleaseDate(LocalDate.now());

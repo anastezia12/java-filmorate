@@ -4,7 +4,6 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
@@ -15,18 +14,14 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidationTest {
-    private static Validator validator;
-    private static User user;
+    private Validator validator;
+    private User user;
 
-    @BeforeAll
-    public static void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-
-    }
 
     @BeforeEach
     public void setUpFilm() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
         user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
     }
 
