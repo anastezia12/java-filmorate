@@ -72,11 +72,6 @@ public class UserController {
             log.warn("UpdateFailed: id = null");
             throw new ValidationException("Id should be present");
         }
-
-        if (!userStorage.containsUserWithKey(id)) {
-            log.warn("id={} is not found in model", id);
-            throw new ValidationException("There are no such id=" + id);
-        }
         User updated = userStorage.updateUser(user);
         log.info("Successfully updated {} with id={} ", user.getClass(), id);
         return updated;

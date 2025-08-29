@@ -34,9 +34,6 @@ public class UserService {
         userContainsInStorage(userId);
         userContainsInStorage(friendId);
         Set<Long> friends = userStorage.getById(userId).getIdOfFriends();
-        if (!friends.contains(friendId)) {
-            throw new IllegalArgumentException("User with id " + friendId + " is already not in friends");
-        }
         friends.remove(friendId);
         userStorage.getById(userId).setIdOfFriends(friends);
         userStorage.getById(friendId).getIdOfFriends().remove(userId);
@@ -61,6 +58,7 @@ public class UserService {
     }
 
     public List<User> getAllFriends(Long id) {
+        userContainsInStorage(id);
         Set<Long> friends = userStorage.getById(id).getIdOfFriends();
         return friends.stream().map(userStorage::getById).toList();
     }

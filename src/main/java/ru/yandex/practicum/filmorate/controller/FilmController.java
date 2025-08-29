@@ -68,10 +68,6 @@ public class FilmController {
             throw new ValidationException("Id should be present");
         }
 
-        if (!filmStorage.containsFilmWithKey(id)) {
-            log.warn("id={} is not found in model", id);
-            throw new ValidationException("There are no such id=" + id);
-        }
         Film updated = filmStorage.updateFilm(film);
         log.info("Successfully updated {} with id={} ", film.getClass(), id);
         return updated;

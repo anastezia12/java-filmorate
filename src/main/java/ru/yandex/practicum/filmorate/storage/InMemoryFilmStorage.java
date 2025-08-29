@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -31,6 +32,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
+        if (!model.containsKey(film.getId())) {
+            throw new NoSuchElementException("there are no such user with id " + film.getId());
+        }
         Film existingFilm = model.get(film.getId());
         existingFilm.setName(film.getName());
         if (film.getDescription() != null) {

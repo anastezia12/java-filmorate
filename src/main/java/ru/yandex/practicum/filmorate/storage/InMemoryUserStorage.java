@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -26,6 +27,9 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
+        if (!model.containsKey(user.getId())) {
+            throw new NoSuchElementException("there are no such user with id " + user.getId());
+        }
         User foundUser = model.get(user.getId());
         if (user.getEmail() != null) {
             foundUser.setEmail(user.getEmail());

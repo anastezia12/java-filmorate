@@ -69,16 +69,6 @@ public class UserServiceTest {
     }
 
     @Test
-    public void throwsErrorWhenIsNotSuchFriend() {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> userService.removeFriend(2L, 1L)
-        );
-
-        assertEquals("User with id 1 is already not in friends", exception.getMessage());
-    }
-
-    @Test
     public void canGet1CommonFriends() {
         userService.addFriend(1L, 2L);
         userService.addFriend(3L, 2L);
