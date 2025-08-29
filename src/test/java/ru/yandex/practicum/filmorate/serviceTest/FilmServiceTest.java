@@ -93,7 +93,7 @@ public class FilmServiceTest {
     }
 
     @Test
-    public void ShowsMostPopularForCount() {
+    public void showsMostPopularForCount() {
         setUpLikes();
         List<Film> films = filmService.mostPopular(5L);
         assertEquals(9, films.getFirst().getLikes().size());
@@ -103,7 +103,7 @@ public class FilmServiceTest {
     }
 
     @Test
-    public void Shows10MostPopularIfThereAreNoCount() {
+    public void shows10MostPopularIfThereAreNoCount() {
         setUpLikes();
         List<Film> films = filmService.mostPopular(null);
         assertEquals(9, films.getFirst().getLikes().size());

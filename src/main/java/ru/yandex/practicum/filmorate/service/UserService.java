@@ -18,14 +18,21 @@ public class UserService {
     }
 
     public void addFriend(Long userId, Long friendId) {
+        userContainsInStorage(userId);
+        userContainsInStorage(friendId);
         if (userStorage.getById(userId).getIdOfFriends().contains(friendId)) {
             throw new IllegalArgumentException("User with id " + friendId + " is already in friends");
+        }
+        if (userId == friendId) {
+            throw new IllegalArgumentException("User can not add himself to friends");
         }
         userStorage.getById(userId).getIdOfFriends().add(friendId);
         userStorage.getById(friendId).getIdOfFriends().add(userId);
     }
 
     public void removeFriend(Long userId, Long friendId) {
+        userContainsInStorage(userId);
+        userContainsInStorage(friendId);
         Set<Long> friends = userStorage.getById(userId).getIdOfFriends();
         if (!friends.contains(friendId)) {
             throw new IllegalArgumentException("User with id " + friendId + " is already not in friends");
@@ -35,7 +42,15 @@ public class UserService {
         userStorage.getById(friendId).getIdOfFriends().remove(userId);
     }
 
+    public void userContainsInStorage(Long id) {
+        if (!userStorage.containsUserWithKey(id)) {
+            throw new IllegalArgumentException("User with id " + id + " is not exists");
+        }
+    }
+
     public List<User> getCommonFriend(Long firstUserId, Long secondUserId) {
+        userContainsInStorage(firstUserId);
+        userContainsInStorage(secondUserId);
         Set<Long> firstUserFriends = new HashSet<>(userStorage.getById(firstUserId).getIdOfFriends());
         Set<Long> secondUserFriends = userStorage.getById(secondUserId).getIdOfFriends();
 
