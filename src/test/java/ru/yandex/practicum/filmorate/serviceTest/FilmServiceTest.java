@@ -3,9 +3,11 @@ package ru.yandex.practicum.filmorate.serviceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,7 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FilmServiceTest {
     private FilmStorage filmStorage = new InMemoryFilmStorage();
-    private FilmService filmService = new FilmService(filmStorage);
+    private InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
+    private FilmService filmService = new FilmService(filmStorage, inMemoryUserStorage);
 
     @BeforeEach
     public void setUpFilmStorage() {
@@ -26,6 +29,9 @@ public class FilmServiceTest {
             film.setReleaseDate(LocalDate.now());
             film.setDescription("description");
             filmStorage.addFilm(film);
+        }
+        for (int i = 1; i < 10; i++) {
+            inMemoryUserStorage.addUser(new User("new@email.com", "login" + i, "name", LocalDate.now().minusDays(10)));
         }
     }
 
