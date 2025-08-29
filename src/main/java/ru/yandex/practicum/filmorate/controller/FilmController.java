@@ -1,46 +1,79 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+
+import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/films")
-public class FilmController extends AbstractController<Film> {
-    public FilmController() {
-        super(LoggerFactory.getLogger(FilmController.class));
+public class FilmController {
+    private Logger log;
+    private FilmStorage filmStorage;
+    private FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmStorage filmStorage, FilmService filmService) {
+        log = LoggerFactory.getLogger(FilmController.class);
+        this.filmStorage = filmStorage;
+        this.filmService = filmService;
     }
 
-    @Override
-    public void setId(Long id, Film film) {
-        film.setId(id);
+    @GetMapping
+    public Collection<Film> getAll() {
+        return filmStorage.getModel();
     }
 
+    @GetMapping("/{id}")
+    public Film getById(@PathVariable Long id) {
+        return filmStorage.getById(id);
+    }
 
-    @Override
-    public void updateFields(Film film) {
-        Film existingFilm = model.get(film.getId());
-        log.debug("film with id={}, had name= {} now it is {}", film.getId(), existingFilm.getName(), film.getName());
-        existingFilm.setName(film.getName());
-        if (film.getDescription() != null) {
-            log.debug("film with id={}, had description= {} now it is {}", film.getId(), existingFilm.getDescription(), film.getDescription());
-            existingFilm.setDescription(film.getDescription());
+    @PostMapping
+    public Film addFilm(@Valid @RequestBody Film film) {
+        log.debug("Started adding {}", film.getClass());
+        Film added = filmStorage.addFilm(film);
+        log.info("Successfully added {} with id= {}", added.getClass(), added.getId());
+        return added;
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.deleteLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getMostPopular(@RequestParam(required = false) Long count) {
+        return filmService.mostPopular(count);
+    }
+
+    @PutMapping
+    public Film updateFilm(@Valid @RequestBody Film film) {
+        Long id = film.getId();
+        if (id == null) {
+            log.warn("UpdateFailed: id = null");
+            throw new ValidationException("Id should be present");
         }
-        if (film.getDuration() != null) {
-            log.debug("film with id={}, had duration= {} now it is {}", film.getId(), existingFilm.getDuration(), film.getDuration());
-            existingFilm.setDuration(film.getDuration());
+
+        if (!filmStorage.containsFilmWithKey(id)) {
+            log.warn("id={} is not found in model", id);
+            throw new ValidationException("There are no such id=" + id);
         }
-        if (film.getReleaseDate() != null) {
-            log.debug("film with id={}, had ReleaseDate= {} now it is {}", film.getId(), existingFilm.getReleaseDate(), film.getReleaseDate());
-            existingFilm.setReleaseDate(film.getReleaseDate());
-        }
+        Film updated = filmStorage.updateFilm(film);
+        log.info("Successfully updated {} with id={} ", film.getClass(), id);
+        return updated;
     }
-
-    @Override
-    public Long getId(Film film) {
-        return film.getId();
-    }
-
-
 }

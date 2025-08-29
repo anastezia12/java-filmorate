@@ -1,0 +1,52 @@
+package ru.yandex.practicum.filmorate.service;
+
+import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+@Service
+public class UserService {
+
+    private final UserStorage userStorage;
+
+    public UserService(UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
+
+    public void addFriend(Long userId, Long friendId) {
+        if (userStorage.getById(userId).getIdOfFriends().contains(friendId)) {
+            throw new IllegalArgumentException("User with id " + friendId + " is already in friends");
+        }
+        userStorage.getById(userId).getIdOfFriends().add(friendId);
+        userStorage.getById(friendId).getIdOfFriends().add(userId);
+    }
+
+    public void removeFriend(Long userId, Long friendId) {
+        Set<Long> friends = userStorage.getById(userId).getIdOfFriends();
+        if (!friends.contains(friendId)) {
+            throw new IllegalArgumentException("User with id " + friendId + " is already not in friends");
+        }
+        friends.remove(friendId);
+        userStorage.getById(userId).setIdOfFriends(friends);
+        userStorage.getById(friendId).getIdOfFriends().remove(userId);
+    }
+
+    public List<User> getCommonFriend(Long firstUserId, Long secondUserId) {
+        Set<Long> firstUserFriends = new HashSet<>(userStorage.getById(firstUserId).getIdOfFriends());
+        Set<Long> secondUserFriends = userStorage.getById(secondUserId).getIdOfFriends();
+
+        firstUserFriends.retainAll(secondUserFriends); // теперь мы работаем с копией
+        return firstUserFriends.stream()
+                .map(userStorage::getById)
+                .toList();
+    }
+
+    public List<User> getAllFriends(Long id) {
+        Set<Long> friends = userStorage.getById(id).getIdOfFriends();
+        return friends.stream().map(userStorage::getById).toList();
+    }
+}
