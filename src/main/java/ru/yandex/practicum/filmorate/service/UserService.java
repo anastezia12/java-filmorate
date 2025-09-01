@@ -1,16 +1,19 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
 public class UserService {
 
+    @Getter
     private final UserStorage userStorage;
 
     public UserService(UserStorage userStorage) {
@@ -23,7 +26,7 @@ public class UserService {
         if (userStorage.getById(userId).getIdOfFriends().contains(friendId)) {
             throw new IllegalArgumentException("User with id " + friendId + " is already in friends");
         }
-        if (userId == friendId) {
+        if (Objects.equals(userId, friendId)) {
             throw new IllegalArgumentException("User can not add himself to friends");
         }
         userStorage.getById(userId).getIdOfFriends().add(friendId);
@@ -35,7 +38,7 @@ public class UserService {
         userContainsInStorage(friendId);
         Set<Long> friends = userStorage.getById(userId).getIdOfFriends();
         friends.remove(friendId);
-        userStorage.getById(userId).setIdOfFriends(friends);
+        //userStorage.getById(userId).setIdOfFriends(friends);
         userStorage.getById(friendId).getIdOfFriends().remove(userId);
     }
 

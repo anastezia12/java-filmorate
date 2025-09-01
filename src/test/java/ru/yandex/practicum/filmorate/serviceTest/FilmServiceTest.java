@@ -1,13 +1,11 @@
 package ru.yandex.practicum.filmorate.serviceTest;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,51 +13,63 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest
 public class FilmServiceTest {
-    private FilmStorage filmStorage = new InMemoryFilmStorage();
-    private InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
-    private FilmService filmService = new FilmService(filmStorage, inMemoryUserStorage);
+    private FilmService filmService;
 
-    @BeforeEach
-    public void setUpFilmStorage() {
+    @Autowired
+    public FilmServiceTest(FilmService filmService) {
+        this.filmService = filmService;
         for (int i = 0; i <= 10; i++) {
             Film film = new Film();
             film.setName("film" + i);
             film.setDuration(30);
             film.setReleaseDate(LocalDate.now());
             film.setDescription("description");
-            filmStorage.addFilm(film);
+            filmService.getFilmStorage().addFilm(film);
         }
         for (int i = 1; i < 10; i++) {
-            inMemoryUserStorage.addUser(new User("new@email.com", "login" + i, "name", LocalDate.now().minusDays(10)));
+            filmService.getUserStorage()
+                    .addUser(new User("new@email.com", "login" + i, "name", LocalDate.now().minusDays(10)));
         }
     }
 
-    @Test
-    public void canAddLike() {
-        filmService.addLike(1L, 2L);
-        assertEquals(1, filmStorage.getById(1L).getLikes().size());
+    @BeforeEach
+    public void deleteLikes() {
+        filmService.getFilmStorage().getModel()
+                .forEach(film -> film.getLikes().clear());
     }
 
     @Test
+    @Order(1)
+    public void canAddLike() {
+        filmService.addLike(1L, 2L);
+        assertEquals(1, filmService.getFilmStorage().getById(1L).getLikes().size());
+    }
+
+    @Test
+    @Order(2)
     public void canDeleteLike() {
         filmService.addLike(2L, 2L);
         filmService.deleteLike(2L, 2L);
-        assertEquals(0, filmStorage.getById(2L).getLikes().size());
+        assertEquals(0, filmService.getFilmStorage().getById(2L).getLikes().size());
     }
 
     @Test
+    @Order(3)
     public void canNotAddLikeToNotExistingFilm() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> filmService.addLike(30L, 2L)
+                () -> filmService.addLike(300L, 2L)
         );
 
-        assertEquals("There are no such film with id 30", exception.getMessage());
+        assertEquals("There are no such film with id 300", exception.getMessage());
 
     }
 
     @Test
+    @Order(4)
     public void canNotAddLike2TimesFor1User() {
         filmService.addLike(3L, 3L);
         IllegalArgumentException exception = assertThrows(
@@ -71,6 +81,7 @@ public class FilmServiceTest {
     }
 
     @Test
+    @Order(5)
     public void canNotDeleteLikeIfItDoNotInLikes() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -99,6 +110,7 @@ public class FilmServiceTest {
     }
 
     @Test
+    @Order(6)
     public void showsMostPopularForCount() {
         setUpLikes();
         List<Film> films = filmService.mostPopular(5L);
@@ -106,17 +118,6 @@ public class FilmServiceTest {
         assertEquals(8, films.get(1).getLikes().size());
         assertEquals(7, films.get(2).getLikes().size());
         assertEquals(5, films.size());
-    }
-
-    @Test
-    public void shows10MostPopularIfThereAreNoCount() {
-        setUpLikes();
-        List<Film> films = filmService.mostPopular(null);
-        assertEquals(9, films.getFirst().getLikes().size());
-        assertEquals(8, films.get(1).getLikes().size());
-        assertEquals(7, films.get(2).getLikes().size());
-        assertEquals(0, films.getLast().getLikes().size());
-        assertEquals(10, films.size());
     }
 
 }

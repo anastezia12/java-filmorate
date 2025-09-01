@@ -2,41 +2,47 @@ package ru.yandex.practicum.filmorate.serviceTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class UserServiceTest {
-    private UserStorage userStorage = new InMemoryUserStorage();
-    private UserService userService = new UserService(userStorage);
+    private UserService userService;
 
+    @Autowired
+    public UserServiceTest(UserService userService) {
+        this.userService = userService;
+        for (int i = 0; i < 5; i++) {
+            userService.getUserStorage().addUser(new User("new@email.com", "login" + i, "name", LocalDate.now().minusDays(10)));
+        }
+    }
 
     @BeforeEach
     public void setUp() {
-        for (int i = 0; i < 5; i++) {
-            userStorage.addUser(new User("new@email.com", "login" + i, "name", LocalDate.now().minusDays(10)));
-        }
+        userService.getUserStorage().getModel()
+                .forEach(user -> user.getIdOfFriends().clear());
     }
 
     @Test
     public void canAddFriendToUser() {
         userService.addFriend(1L, 2L);
-        assertEquals(1, userStorage.getById(1L).getIdOfFriends().size());
-        assertTrue(userStorage.getById(1L).getIdOfFriends().contains(2L));
+        assertEquals(1, userService.getUserStorage().getById(1L).getIdOfFriends().size());
+        assertTrue(userService.getUserStorage().getById(1L).getIdOfFriends().contains(2L));
     }
 
     @Test
     public void canAddFriendToUserAndBack() {
         userService.addFriend(1L, 2L);
-        assertEquals(1, userStorage.getById(1L).getIdOfFriends().size());
-        assertTrue(userStorage.getById(1L).getIdOfFriends().contains(2L));
-        assertEquals(1, userStorage.getById(2L).getIdOfFriends().size());
-        assertTrue(userStorage.getById(2L).getIdOfFriends().contains(1L));
+        assertEquals(1, userService.getUserStorage().getById(1L).getIdOfFriends().size());
+        assertTrue(userService.getUserStorage().getById(1L).getIdOfFriends().contains(2L));
+        assertEquals(1, userService.getUserStorage().getById(2L).getIdOfFriends().size());
+        assertTrue(userService.getUserStorage().getById(2L).getIdOfFriends().contains(1L));
     }
 
     @Test
@@ -64,8 +70,8 @@ public class UserServiceTest {
     public void canDeleteFriend() {
         userService.addFriend(1L, 2L);
         userService.removeFriend(2L, 1L);
-        assertEquals(0, userStorage.getById(2L).getIdOfFriends().size());
-        assertEquals(0, userStorage.getById(1L).getIdOfFriends().size());
+        assertEquals(0, userService.getUserStorage().getById(2L).getIdOfFriends().size());
+        assertEquals(0, userService.getUserStorage().getById(1L).getIdOfFriends().size());
     }
 
     @Test

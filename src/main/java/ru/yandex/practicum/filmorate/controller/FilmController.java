@@ -8,39 +8,35 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.Collection;
 import java.util.List;
 
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private Logger log;
-    private FilmStorage filmStorage;
+    @Autowired
+    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private FilmService filmService;
 
     @Autowired
-    public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        log = LoggerFactory.getLogger(FilmController.class);
-        this.filmStorage = filmStorage;
+    public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
 
     @GetMapping
-    public Collection<Film> getAll() {
-        return filmStorage.getModel();
+    public List<Film> getAll() {
+        return filmService.getFilmStorage().getModel();
     }
 
     @GetMapping("/{id}")
     public Film getById(@PathVariable Long id) {
-        return filmStorage.getById(id);
+        return filmService.getFilmStorage().getById(id);
     }
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
         log.debug("Started adding {}", film.getClass());
-        Film added = filmStorage.addFilm(film);
+        Film added = filmService.getFilmStorage().addFilm(film);
         log.info("Successfully added {} with id= {}", added.getClass(), added.getId());
         return added;
     }
@@ -56,7 +52,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getMostPopular(@RequestParam(required = false) Long count) {
+    public List<Film> getMostPopular(@RequestParam(required = false, defaultValue = "10") Long count) {
         return filmService.mostPopular(count);
     }
 
@@ -68,7 +64,7 @@ public class FilmController {
             throw new ValidationException("Id should be present");
         }
 
-        Film updated = filmStorage.updateFilm(film);
+        Film updated = filmService.getFilmStorage().updateFilm(film);
         log.info("Successfully updated {} with id={} ", film.getClass(), id);
         return updated;
     }

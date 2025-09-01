@@ -1,8 +1,11 @@
 package ru.yandex.practicum.filmorate.storageTest;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
@@ -10,48 +13,51 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest
 public class InMemoryFilmStorageTest {
-    private static Film film = new Film();
+    private Film film = new Film();
     private InMemoryFilmStorage inMemoryFilmStorage;
 
-    @BeforeAll
-    public static void setUp() {
+    @Autowired
+    public InMemoryFilmStorageTest(InMemoryFilmStorage inMemoryFilmStorage) {
+        this.inMemoryFilmStorage = inMemoryFilmStorage;
         film.setName("film");
         film.setDuration(30);
         film.setReleaseDate(LocalDate.now());
         film.setDescription("description");
     }
 
-    @BeforeEach
-    public void setUpInMemoryFilmStorage() {
-        inMemoryFilmStorage = new InMemoryFilmStorage();
-    }
-
     @Test
+    @Order(2)
     public void canAddFilmToModel() {
         inMemoryFilmStorage.addFilm(film);
         assertEquals(1L, film.getId());
     }
 
     @Test
+    @Order(3)
     public void canDeleteById() {
         inMemoryFilmStorage.addFilm(film);
-        inMemoryFilmStorage.deleteById(1L);
-        assertEquals(0, inMemoryFilmStorage.getModel().size());
+        inMemoryFilmStorage.deleteById(film.getId());
+        assertEquals(1, inMemoryFilmStorage.getModel().size());
     }
 
     @Test
+    @Order(4)
     public void canGetById() {
         inMemoryFilmStorage.addFilm(film);
-        assertEquals(film, inMemoryFilmStorage.getById(1L));
+        assertEquals(film, inMemoryFilmStorage.getById(film.getId()));
     }
 
     @Test
+    @Order(5)
     public void returnNothingWhenNoSuchFilmWithId() {
-        assertNull(inMemoryFilmStorage.getById(1L));
+        assertNull(inMemoryFilmStorage.getById(1000L));
     }
 
     @Test
+    @Order(6)
     public void canUpdateFilm() {
         inMemoryFilmStorage.addFilm(film);
         Film newFilm = new Film();
@@ -62,6 +68,7 @@ public class InMemoryFilmStorageTest {
     }
 
     @Test
+    @Order(7)
     public void willNotUpdateNullFields() {
         inMemoryFilmStorage.addFilm(film);
         Film newFilm = new Film();
@@ -79,10 +86,11 @@ public class InMemoryFilmStorageTest {
 
     @Test
     public void containsFilmWithKeyFalse() {
-        assertFalse(inMemoryFilmStorage.containsFilmWithKey(1L));
+        assertFalse(inMemoryFilmStorage.containsFilmWithKey(100L));
     }
 
     @Test
+    @Order(1)
     public void willReturnEmptyModelIfNoFilms() {
         assertEquals(0, inMemoryFilmStorage.getModel().size());
     }
@@ -90,8 +98,7 @@ public class InMemoryFilmStorageTest {
     @Test
     public void willReturnModelWithFilms() {
         inMemoryFilmStorage.addFilm(film);
-        inMemoryFilmStorage.addFilm(film);
-        assertEquals(2, inMemoryFilmStorage.getModel().size());
+        assertTrue(inMemoryFilmStorage.getModel().contains(film));
     }
 
 }

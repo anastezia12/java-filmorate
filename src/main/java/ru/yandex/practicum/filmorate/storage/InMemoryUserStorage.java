@@ -3,8 +3,8 @@ package ru.yandex.practicum.filmorate.storage;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -45,13 +45,16 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     private long getNextId() {
-        long currentMaxId = model.keySet().stream().mapToLong(id -> id).max().orElse(0);
+        long currentMaxId = model.keySet().stream()
+                .mapToLong(id -> id)
+                .max()
+                .orElse(0);
         return ++currentMaxId;
     }
 
     @Override
-    public Collection<User> getModel() {
-        return model.values();
+    public List<User> getModel() {
+        return model.values().stream().toList();
     }
 
     @Override

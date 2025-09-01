@@ -8,33 +8,28 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Collection;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private Logger log;
-    private UserStorage userStorage;
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private UserService userService;
 
     @Autowired
-    public UserController(UserStorage userStorage, UserService userService) {
-        log = LoggerFactory.getLogger(FilmController.class);
-        this.userStorage = userStorage;
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
-    public Collection<User> getAll() {
-        return userStorage.getModel();
+    public List<User> getAll() {
+        return userService.getUserStorage().getModel();
     }
 
     @GetMapping("/{id}")
     public User getBuId(@PathVariable Long id) {
-        return userStorage.getById(id);
+        return userService.getUserStorage().getById(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -60,7 +55,7 @@ public class UserController {
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
         log.debug("Started adding {}", user.getClass());
-        User added = userStorage.addUser(user);
+        User added = userService.getUserStorage().addUser(user);
         log.info("Successfully added {} with id= {}", added.getClass(), added.getId());
         return added;
     }
@@ -72,7 +67,7 @@ public class UserController {
             log.warn("UpdateFailed: id = null");
             throw new ValidationException("Id should be present");
         }
-        User updated = userStorage.updateUser(user);
+        User updated = userService.getUserStorage().updateUser(user);
         log.info("Successfully updated {} with id={} ", user.getClass(), id);
         return updated;
     }

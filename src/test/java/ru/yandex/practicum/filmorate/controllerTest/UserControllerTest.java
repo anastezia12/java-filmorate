@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.controllerTest;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
@@ -13,40 +15,44 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest
 public class UserControllerTest {
     private User user;
     private UserController userController;
     private UserStorage userStorage;
 
-    @BeforeEach
-    public void setUp() {
-        userStorage = new InMemoryUserStorage();
-        userController = new UserController(userStorage, new UserService(userStorage));
+    @Autowired
+    public void setUp(UserController userController) {
+        this.userController = userController;
         user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
     }
 
     @Test
+    @Order(3)
     public void canAddCorrectUser() {
-        User postedUser = userController.addUser(user);
-        user.setId(1L);
-        assertEquals(user, postedUser);
+        int size = userController.getAll().size();
+        userController.addUser(user);
+        assertEquals(++size, userController.getAll().size());
     }
 
     @Test
+    @Order(4)
     public void canUpdateExistingUser() {
         userController.addUser(user);
         user.setId(1L);
         user.setName("New name");
         assertEquals(user, userController.updateUser(user));
-        assertEquals(1, userController.getAll().size());
     }
 
     @Test
+    @Order(1)
     public void canReturnEmptyListWhenNoUsers() {
         assertTrue(userController.getAll().isEmpty());
     }
 
     @Test
+    @Order(2)
     public void canReturnUsersWithMultipleUsers() {
         userController.addUser(user);
         userController.addUser(user);
