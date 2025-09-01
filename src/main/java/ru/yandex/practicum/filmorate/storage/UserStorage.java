@@ -16,4 +16,6 @@ public interface UserStorage {
     boolean containsUserWithKey(Long id);
 
     User getById(Long id);
+
+    void clear();
 }

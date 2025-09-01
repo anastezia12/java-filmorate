@@ -13,20 +13,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class UserServiceTest {
+    @Autowired
     private UserService userService;
 
-    @Autowired
-    public UserServiceTest(UserService userService) {
-        this.userService = userService;
-        for (int i = 0; i < 5; i++) {
-            userService.getUserStorage().addUser(new User("new@email.com", "login" + i, "name", LocalDate.now().minusDays(10)));
-        }
-    }
 
     @BeforeEach
     public void setUp() {
-        userService.getUserStorage().getModel()
-                .forEach(user -> user.getIdOfFriends().clear());
+        userService.getUserStorage().clear();
+        for (int i = 0; i < 5; i++) {
+            userService.getUserStorage().addUser(new User("new@email.com", "login" + i, "name", LocalDate.now().minusDays(10)));
+        }
     }
 
     @Test

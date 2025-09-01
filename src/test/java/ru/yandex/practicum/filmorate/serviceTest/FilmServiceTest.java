@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.serviceTest;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -13,14 +14,15 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 public class FilmServiceTest {
+    @Autowired
     private FilmService filmService;
 
-    @Autowired
-    public FilmServiceTest(FilmService filmService) {
-        this.filmService = filmService;
+
+    @BeforeEach
+    public void deleteLikes() {
+        filmService.getFilmStorage().clear();
         for (int i = 0; i <= 10; i++) {
             Film film = new Film();
             film.setName("film" + i);
@@ -35,21 +37,13 @@ public class FilmServiceTest {
         }
     }
 
-    @BeforeEach
-    public void deleteLikes() {
-        filmService.getFilmStorage().getModel()
-                .forEach(film -> film.getLikes().clear());
-    }
-
     @Test
-    @Order(1)
     public void canAddLike() {
         filmService.addLike(1L, 2L);
         assertEquals(1, filmService.getFilmStorage().getById(1L).getLikes().size());
     }
 
     @Test
-    @Order(2)
     public void canDeleteLike() {
         filmService.addLike(2L, 2L);
         filmService.deleteLike(2L, 2L);
@@ -57,7 +51,6 @@ public class FilmServiceTest {
     }
 
     @Test
-    @Order(3)
     public void canNotAddLikeToNotExistingFilm() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -69,7 +62,6 @@ public class FilmServiceTest {
     }
 
     @Test
-    @Order(4)
     public void canNotAddLike2TimesFor1User() {
         filmService.addLike(3L, 3L);
         IllegalArgumentException exception = assertThrows(
@@ -81,7 +73,6 @@ public class FilmServiceTest {
     }
 
     @Test
-    @Order(5)
     public void canNotDeleteLikeIfItDoNotInLikes() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -110,7 +101,6 @@ public class FilmServiceTest {
     }
 
     @Test
-    @Order(6)
     public void showsMostPopularForCount() {
         setUpLikes();
         List<Film> films = filmService.mostPopular(5L);

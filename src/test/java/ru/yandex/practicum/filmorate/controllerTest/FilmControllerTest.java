@@ -1,21 +1,26 @@
 package ru.yandex.practicum.filmorate.controllerTest;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 public class FilmControllerTest {
     private static Film film;
+    @Autowired
     private FilmController filmController;
+    @Autowired
+    private FilmStorage filmStorage;
 
     @BeforeAll
     public static void filmSetUp() {
@@ -26,21 +31,20 @@ public class FilmControllerTest {
         film.setDescription("description");
     }
 
-    @Autowired
-    public void setUp(FilmController filmController) {
-        this.filmController = filmController;
+    @BeforeEach
+    void reset() {
+        filmStorage.clear();
     }
 
+
     @Test
-    @Order(3)
     public void canAddCorrectFilm() {
-        int size = filmController.getAll().size();
-        filmController.addFilm(film);
-        assertEquals(size + 1, filmController.getAll().size());
+        Film postedFilm = filmController.addFilm(film);
+        film.setId(1L);
+        assertEquals(film, postedFilm);
     }
 
     @Test
-    @Order(4)
     public void canUpdateExistingFilm() {
         filmController.addFilm(film);
         film.setId(1L);
@@ -49,13 +53,11 @@ public class FilmControllerTest {
     }
 
     @Test
-    @Order(1)
     public void canReturnEmptyListWhenNoFilms() {
         assertTrue(filmController.getAll().isEmpty());
     }
 
     @Test
-    @Order(2)
     public void canReturnFilmsWithMultipleFilms() {
         filmController.addFilm(film);
         filmController.addFilm(film);

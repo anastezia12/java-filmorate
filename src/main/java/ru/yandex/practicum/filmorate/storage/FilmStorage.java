@@ -16,4 +16,6 @@ public interface FilmStorage {
     Film getById(Long id);
 
     List<Film> getModel();
+
+    void clear();
 }
