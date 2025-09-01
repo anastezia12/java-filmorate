@@ -32,7 +32,8 @@ public class FilmServiceTest {
             filmService.getFilmStorage().addFilm(film);
         }
         for (int i = 1; i < 10; i++) {
-            filmService.getUserStorage()
+            filmService.getUserService()
+                    .getUserStorage()
                     .addUser(new User("new@email.com", "login" + i, "name", LocalDate.now().minusDays(10)));
         }
     }

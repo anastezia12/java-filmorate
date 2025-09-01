@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Comparator;
 import java.util.List;
@@ -20,21 +19,20 @@ public class FilmService {
     @Getter
     private final FilmStorage filmStorage;
     @Getter
-    private final UserStorage userStorage;
+    private final UserService userService;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+        this.userService = userService;
     }
 
     public void addLike(Long idOfFilm, Long idOfUser) {
         if (!filmStorage.containsFilmWithKey(idOfFilm)) {
             throw new IllegalArgumentException("There are no such film with id " + idOfFilm);
         }
-        if (!userStorage.containsUserWithKey(idOfUser)) {
-            throw new IllegalArgumentException("There are no user with id " + idOfFilm);
-        }
+        userService.userContainsInStorage(idOfUser);
+
         Set<Long> likes = filmStorage.getById(idOfFilm).getLikes();
         if (likes.contains(idOfUser)) {
             throw new IllegalArgumentException("User with id " + idOfUser + " already added like");
@@ -47,17 +45,19 @@ public class FilmService {
         if (!filmStorage.containsFilmWithKey(idOfFilm)) {
             throw new IllegalArgumentException("There are no such film with id " + idOfFilm);
         }
+        userService.userContainsInStorage(idOfUser);
         Set<Long> likes = filmStorage.getById(idOfFilm).getLikes();
         if (!likes.contains(idOfUser)) {
             throw new IllegalArgumentException("User with id " + idOfUser + " do not have a like here");
         }
-
         likes.remove(idOfUser);
     }
 
     public List<Film> mostPopular(Long count) {
-        return filmStorage.getModel().stream().sorted(POPULARITY_DESC)
-                .limit(count).collect(Collectors.toList());
+        return filmStorage.getModel().stream()
+                .sorted(POPULARITY_DESC)
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
 }

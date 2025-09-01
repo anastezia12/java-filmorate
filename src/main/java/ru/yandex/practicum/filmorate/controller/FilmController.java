@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    @Autowired
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private FilmService filmService;
 

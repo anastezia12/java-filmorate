@@ -38,7 +38,6 @@ public class UserService {
         userContainsInStorage(friendId);
         Set<Long> friends = userStorage.getById(userId).getIdOfFriends();
         friends.remove(friendId);
-        //userStorage.getById(userId).setIdOfFriends(friends);
         userStorage.getById(friendId).getIdOfFriends().remove(userId);
     }
 
@@ -63,6 +62,8 @@ public class UserService {
     public List<User> getAllFriends(Long id) {
         userContainsInStorage(id);
         Set<Long> friends = userStorage.getById(id).getIdOfFriends();
-        return friends.stream().map(userStorage::getById).toList();
+        return friends.stream()
+                .map(userStorage::getById)
+                .toList();
     }
 }
