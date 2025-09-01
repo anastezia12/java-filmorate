@@ -67,4 +67,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return model.containsKey(id);
     }
 
+    public void clear() {
+        model.clear();
+    }
 }

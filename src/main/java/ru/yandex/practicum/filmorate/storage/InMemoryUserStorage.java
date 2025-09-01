@@ -66,4 +66,8 @@ public class InMemoryUserStorage implements UserStorage {
     public User getById(Long id) {
         return model.get(id);
     }
+
+    public void clear() {
+        model.clear();
+    }
 }
