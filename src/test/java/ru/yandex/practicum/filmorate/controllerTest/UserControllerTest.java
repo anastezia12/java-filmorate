@@ -18,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 public class UserControllerTest {
-    private User user;
+    private User user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
+    ;
     private UserController userController;
     private UserStorage userStorage;
 
     @Autowired
     public void setUp(UserController userController) {
         this.userController = userController;
-        user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
     }
 
     @Test

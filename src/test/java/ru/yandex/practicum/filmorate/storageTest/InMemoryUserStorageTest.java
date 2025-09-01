@@ -16,13 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 public class InMemoryUserStorageTest {
-    private User user;
     private InMemoryUserStorage inMemoryUserStorage;
+    private User user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
 
     @Autowired
     public InMemoryUserStorageTest(InMemoryUserStorage inMemoryUserStorage) {
         this.inMemoryUserStorage = inMemoryUserStorage;
-        user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
     }
 
     @Test
