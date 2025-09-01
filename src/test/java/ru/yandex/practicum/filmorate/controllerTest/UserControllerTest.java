@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 
@@ -19,9 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class UserControllerTest {
     private User user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
-    ;
     private UserController userController;
-    private UserStorage userStorage;
 
     @Autowired
     public void setUp(UserController userController) {
