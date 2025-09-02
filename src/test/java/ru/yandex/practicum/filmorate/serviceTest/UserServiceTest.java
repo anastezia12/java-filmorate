@@ -29,16 +29,16 @@ public class UserServiceTest {
     public void canAddFriendToUser() {
         userService.addFriend(1L, 2L);
         assertEquals(1, userService.getUserStorage().getById(1L).getIdOfFriends().size());
-        assertTrue(userService.getUserStorage().getById(1L).getIdOfFriends().contains(2L));
+        assertTrue(userService.getUserStorage().getById(1L).getIdOfFriends().keySet().contains(2L));
     }
 
     @Test
     public void canAddFriendToUserAndBack() {
         userService.addFriend(1L, 2L);
         assertEquals(1, userService.getUserStorage().getById(1L).getIdOfFriends().size());
-        assertTrue(userService.getUserStorage().getById(1L).getIdOfFriends().contains(2L));
+        assertTrue(userService.getUserStorage().getById(1L).getIdOfFriends().keySet().contains(2L));
         assertEquals(1, userService.getUserStorage().getById(2L).getIdOfFriends().size());
-        assertTrue(userService.getUserStorage().getById(2L).getIdOfFriends().contains(1L));
+        assertTrue(userService.getUserStorage().getById(2L).getIdOfFriends().keySet().contains(1L));
     }
 
     @Test

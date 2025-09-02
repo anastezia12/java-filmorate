@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.anotations.AfterDate;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -33,4 +34,8 @@ public class Film {
     private Integer duration;
 
     private Set<Long> likes = new HashSet<>();
+
+    private List<Genre> genre;
+
+    private Rating rating;
 }

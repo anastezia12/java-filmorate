@@ -4,8 +4,8 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 public class User {
@@ -20,13 +20,13 @@ public class User {
     @NotNull
     @Past
     private LocalDate birthday;
-    private Set<Long> idOfFriends;
+    private Map<Long, FriendshipStatus> idOfFriends;
 
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
         this.login = login;
         this.name = (name == null || name.isBlank()) ? login : name;
         this.birthday = birthday;
-        idOfFriends = new HashSet<>();
+        idOfFriends = new HashMap<>();
     }
 }
