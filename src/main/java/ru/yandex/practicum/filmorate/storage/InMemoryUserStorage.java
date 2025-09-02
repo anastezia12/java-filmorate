@@ -1,0 +1,73 @@
+package ru.yandex.practicum.filmorate.storage;
+
+import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.User;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+@Component
+public class InMemoryUserStorage implements UserStorage {
+    private final Map<Long, User> model = new HashMap<>();
+
+    @Override
+    public User addUser(User user) {
+        Long id = getNextId();
+        user.setId(id);
+        model.put(id, user);
+        return user;
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        model.remove(id);
+    }
+
+    @Override
+    public User updateUser(User user) {
+        if (!model.containsKey(user.getId())) {
+            throw new NoSuchElementException("there are no such user with id " + user.getId());
+        }
+        User foundUser = model.get(user.getId());
+        if (user.getEmail() != null) {
+            foundUser.setEmail(user.getEmail());
+        }
+        if (user.getLogin() != null) {
+            foundUser.setLogin(user.getLogin());
+        }
+        foundUser.setName(user.getName());
+        if (user.getBirthday() != null) {
+            foundUser.setBirthday(user.getBirthday());
+        }
+        return user;
+    }
+
+    private long getNextId() {
+        long currentMaxId = model.keySet().stream()
+                .mapToLong(id -> id)
+                .max()
+                .orElse(0);
+        return ++currentMaxId;
+    }
+
+    @Override
+    public List<User> getModel() {
+        return model.values().stream().toList();
+    }
+
+    @Override
+    public boolean containsUserWithKey(Long id) {
+        return model.containsKey(id);
+    }
+
+    @Override
+    public User getById(Long id) {
+        return model.get(id);
+    }
+
+    public void clear() {
+        model.clear();
+    }
+}

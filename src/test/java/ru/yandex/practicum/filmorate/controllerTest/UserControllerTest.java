@@ -2,37 +2,43 @@ package ru.yandex.practicum.filmorate.controllerTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SpringBootTest
 public class UserControllerTest {
-    private User user;
+    private User user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
+    @Autowired
     private UserController userController;
+    @Autowired
+    private UserStorage userStorage;
 
     @BeforeEach
-    public void setUp() {
-        userController = new UserController();
-        user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
+    public void clear() {
+        userStorage.clear();
     }
 
     @Test
     public void canAddCorrectUser() {
-        User postedUser = userController.post(user);
+        User postedUser = userController.addUser(user);
         user.setId(1L);
         assertEquals(user, postedUser);
     }
 
     @Test
     public void canUpdateExistingUser() {
-        userController.post(user);
+        userController.addUser(user);
         user.setId(1L);
         user.setName("New name");
-        assertEquals(user, userController.update(user));
+        assertEquals(user, userController.updateUser(user));
         assertEquals(1, userController.getAll().size());
     }
 
@@ -43,9 +49,9 @@ public class UserControllerTest {
 
     @Test
     public void canReturnUsersWithMultipleUsers() {
-        userController.post(user);
-        userController.post(user);
-        userController.post(user);
+        userController.addUser(user);
+        userController.addUser(user);
+        userController.addUser(user);
         assertEquals(3, userController.getAll().size());
         assertTrue(userController.getAll().stream().allMatch(x -> x.getName().equals("name")));
     }
