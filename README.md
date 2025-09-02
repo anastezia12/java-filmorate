@@ -39,3 +39,75 @@ JOIN friendship_status fs2 ON f2.status_id = fs2.id
 WHERE f2.user_id = 2 AND fs2.status = 'confirmed'
 );
 ```
+### DSL 
+```
+Table user {
+  id integer [primary key]
+  email varchar [not null, unique] 
+  login varchar [not null, unique]
+  name varchar
+  birthday date [not null]
+}
+
+Table film {
+  id integer [primary key]
+  name varchar [not null]
+  description varchar
+  release_date date [not null]
+  duration integer [not null]
+  rating_id integer
+}
+
+Table rating {
+  id integer [primary key]
+  name varchar [not null, unique] 
+}
+
+Table genre {
+  id integer [primary key]
+  name varchar [not null, unique]
+}
+
+Table film_genres {
+  film_id integer [not null]
+  genre_id integer [not null]
+  
+  indexes {
+    (film_id, genre_id) [unique] 
+  }
+}
+
+Table film_likes {
+  film_id integer [not null]
+  user_id integer [not null]
+  
+  indexes {
+    (film_id, user_id) [unique] 
+  }
+}
+
+Table friendship_status {
+  id integer [primary key]
+  status varchar [not null, unique] 
+}
+
+Table friends {
+  id integer [primary key]
+  user_id integer [not null]
+  friend_id integer [not null]
+  status_id integer [not null]
+
+  indexes {
+    (user_id, friend_id) [unique]
+  }
+}
+
+Ref: film.rating_id > rating.id
+Ref: film_genres.film_id > film.id
+Ref: film_genres.genre_id > genre.id
+Ref: film_likes.film_id > film.id
+Ref: film_likes.user_id > user.id
+Ref: friends.user_id > user.id
+Ref: friends.friend_id > user.id
+Ref: friends.status_id > friendship_status.id
+```
