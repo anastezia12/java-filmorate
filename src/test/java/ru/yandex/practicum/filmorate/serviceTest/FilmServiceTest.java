@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -23,12 +24,15 @@ public class FilmServiceTest {
     @BeforeEach
     public void deleteLikes() {
         filmService.getFilmStorage().clear();
+        filmService.getUserService()
+                .getUserStorage().clear();
         for (int i = 0; i <= 10; i++) {
             Film film = new Film();
             film.setName("film" + i);
             film.setDuration(30);
             film.setReleaseDate(LocalDate.now());
             film.setDescription("description");
+            film.setMpa(new MPA(1L, "G"));
             filmService.getFilmStorage().addFilm(film);
         }
         for (int i = 1; i < 10; i++) {
