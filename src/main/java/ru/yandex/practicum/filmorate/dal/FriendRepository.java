@@ -12,16 +12,14 @@ import java.util.Optional;
 @Repository
 public class FriendRepository extends BaseRepository<Friend> {
 
-    private static final String FIND_COMMON_FRIENDS_QUERY =
-            """
-                    SELECT f1.friend_id
-                    FROM friends f1
-                    JOIN friends f2 ON f1.friend_id = f2.friend_id
-                    WHERE f1.user_id = ? 
-                      AND f2.user_id = ?
-                      AND f1.status_id IN (?, ?)
-                      AND f2.status_id IN (?, ?)
-                    """;
+    private static final String FIND_COMMON_FRIENDS_QUERY = " SELECT f1.friend_id " +
+            " FROM friends f1 " +
+            " JOIN friends f2 ON f1.friend_id = f2.friend_id " +
+            " WHERE f1.user_id = ? " +
+            " AND f2.user_id = ? " +
+            " AND f1.status_id IN (?, ?) " +
+            " AND f2.status_id IN (?, ?)";
+
     private static final String ADD_FRIEND_QUERY =
             "INSERT INTO friends(user_id, friend_id, status_id) VALUES (?, ?, ?)";
 
