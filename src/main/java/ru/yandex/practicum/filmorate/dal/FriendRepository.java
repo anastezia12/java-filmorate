@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public class FriendRepository extends BaseRepository<Friend> {
+
     private static final String FIND_COMMON_FRIENDS_QUERY =
             """
                     SELECT f1.friend_id
