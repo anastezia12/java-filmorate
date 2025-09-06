@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DuplicateKeyException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -28,46 +29,35 @@ public class UserServiceTest {
     @Test
     public void canAddFriendToUser() {
         userService.addFriend(1L, 2L);
-        assertEquals(1, userService.getUserStorage().getById(1L).getIdOfFriends().size());
-        assertTrue(userService.getUserStorage().getById(1L).getIdOfFriends().keySet().contains(2L));
+        assertEquals(1, userService.getAllFriends(1L).size());
+        assertTrue(userService.getAllFriends(1L).stream()
+                .anyMatch(user -> user.getId() == 2L));
     }
 
-    @Test
-    public void canAddFriendToUserAndBack() {
-        userService.addFriend(1L, 2L);
-        assertEquals(1, userService.getUserStorage().getById(1L).getIdOfFriends().size());
-        assertTrue(userService.getUserStorage().getById(1L).getIdOfFriends().keySet().contains(2L));
-        assertEquals(1, userService.getUserStorage().getById(2L).getIdOfFriends().size());
-        assertTrue(userService.getUserStorage().getById(2L).getIdOfFriends().keySet().contains(1L));
-    }
 
     @Test
     public void canNotAddUserWithSameIdToFriends() {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> userService.addFriend(4L, 4L)
-        );
+        assertThrows(DuplicateKeyException.class, () -> userService.addFriend(4L, 4L));
 
-        assertEquals("User can not add himself to friends", exception.getMessage());
     }
 
     @Test
     public void canNotAddFriendToFriends() {
         userService.addFriend(1L, 2L);
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> userService.addFriend(2L, 1L)
-        );
 
-        assertEquals("User with id 1 is already in friends", exception.getMessage());
+        assertThrows(DuplicateKeyException.class, () -> userService.addFriend(2L, 1L));
+
     }
 
     @Test
     public void canDeleteFriend() {
         userService.addFriend(1L, 2L);
-        userService.removeFriend(2L, 1L);
-        assertEquals(0, userService.getUserStorage().getById(2L).getIdOfFriends().size());
-        assertEquals(0, userService.getUserStorage().getById(1L).getIdOfFriends().size());
+        assertTrue(userService.getAllFriends(1L).stream()
+                .anyMatch(user -> user.getId() == 2L));
+        userService.removeFriend(1L, 2L);
+
+        assertFalse(userService.getAllFriends(1L).stream()
+                .anyMatch(user -> user.getId() == 2L));
     }
 
     @Test

@@ -2,12 +2,12 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
+@EqualsAndHashCode(of = "id")
 public class User {
     private Long id;
     @NotNull
@@ -20,13 +20,15 @@ public class User {
     @NotNull
     @Past
     private LocalDate birthday;
-    private Map<Long, FriendshipStatus> idOfFriends;
 
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
         this.login = login;
         this.name = (name == null || name.isBlank()) ? login : name;
         this.birthday = birthday;
-        idOfFriends = new HashMap<>();
+    }
+
+    public User() {
+
     }
 }

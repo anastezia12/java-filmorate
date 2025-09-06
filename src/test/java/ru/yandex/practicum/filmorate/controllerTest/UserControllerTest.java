@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
@@ -19,6 +20,7 @@ public class UserControllerTest {
     @Autowired
     private UserController userController;
     @Autowired
+    @Qualifier("userDbStorage")
     private UserStorage userStorage;
 
     @BeforeEach
@@ -50,7 +52,9 @@ public class UserControllerTest {
     @Test
     public void canReturnUsersWithMultipleUsers() {
         userController.addUser(user);
+        user.setLogin("LoginUser1");
         userController.addUser(user);
+        user.setLogin("loginUser2");
         userController.addUser(user);
         assertEquals(3, userController.getAll().size());
         assertTrue(userController.getAll().stream().allMatch(x -> x.getName().equals("name")));

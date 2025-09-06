@@ -4,9 +4,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
@@ -20,6 +22,7 @@ public class FilmControllerTest {
     @Autowired
     private FilmController filmController;
     @Autowired
+    @Qualifier("filmDbStorage")
     private FilmStorage filmStorage;
 
     @BeforeAll
@@ -29,6 +32,7 @@ public class FilmControllerTest {
         film.setDuration(30);
         film.setReleaseDate(LocalDate.now());
         film.setDescription("description");
+        film.setMpa(new MPA(1L, "G"));
     }
 
     @BeforeEach
