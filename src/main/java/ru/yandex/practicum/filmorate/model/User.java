@@ -3,11 +3,13 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
 @EqualsAndHashCode(of = "id")
+@NoArgsConstructor
 public class User {
     private Long id;
     @NotNull
@@ -28,7 +30,4 @@ public class User {
         this.birthday = birthday;
     }
 
-    public User() {
-
-    }
 }

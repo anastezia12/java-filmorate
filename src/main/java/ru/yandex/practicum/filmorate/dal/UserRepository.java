@@ -25,7 +25,7 @@ public class UserRepository extends BaseRepository<User> {
     }
 
 
-    public Optional<User> findById(long userId) {
+    public Optional<User> findById(Long userId) {
         return findOne(FIND_BY_ID_QUERY, userId);
     }
 

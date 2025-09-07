@@ -34,7 +34,7 @@ public class UserService {
     public void removeFriend(Long userId, Long friendId) {
         userContainsInStorage(userId);
         userContainsInStorage(friendId);
-        if (friendRepository.getAllFriendsIdFromUserConfirmed(userId).contains(friendId)) {
+        if (friendRepository.getAllFriendsIdFromUser(userId, FriendshipStatus.CONFIRMED.getId()).contains(friendId)) {
             friendRepository.removeFriend(userId, friendId);
         }
 
@@ -56,7 +56,7 @@ public class UserService {
 
     public List<User> getAllFriends(Long id) {
         userContainsInStorage(id);
-        List<Long> friends = friendRepository.getAllFriendsIdFromUserConfirmed(id);
+        List<Long> friends = friendRepository.getAllFriendsIdFromUser(id, FriendshipStatus.CONFIRMED.getId());
         return friends.stream()
                 .map(userStorage::getById)
                 .filter(Objects::nonNull)

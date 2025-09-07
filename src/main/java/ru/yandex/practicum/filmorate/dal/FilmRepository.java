@@ -18,7 +18,7 @@ public class FilmRepository extends BaseRepository<Film> {
     private static final String FIND_BY_ID_QUERY =
             "SELECT f.*, r.name AS mpa_name " +
                     "FROM film f " +
-                    "LEFT JOIN mpa r ON mpa_id = r.id " +
+                    "LEFT JOIN mpa r ON f.mpa_id = r.id " +
                     "WHERE f.id = ?";
     private static final String INSERT_QUERY = "INSERT INTO film(name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
     private static final String UPDATE_QUERY = "UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? WHERE id = ?";

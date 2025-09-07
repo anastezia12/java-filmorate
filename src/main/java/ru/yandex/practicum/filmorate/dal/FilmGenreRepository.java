@@ -9,16 +9,22 @@ import java.util.List;
 
 @Repository
 public class FilmGenreRepository {
-    private static final String INSERT_FILM_GENRE = "INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)";
-    private static final String EXISTS_FILM_GENRE = "SELECT COUNT(*) FROM film_genres WHERE film_id = ? AND genre_id = ?";
     private static final String DELETE_ALL_GENRES_FROM_FILM = "DELETE FROM film_genres WHERE film_id = ?";
     private static final String ADD_FILM_GENRE = "INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)";
-
+    private static final String GET_GENRES_FOR_FILM = """
+            SELECT g.id, g.name
+            FROM genre g
+            JOIN film_genres fg ON g.id = fg.genre_id
+            WHERE fg.film_id = ?
+            ORDER BY g.id
+            """;
 
     private final JdbcTemplate jdbcTemplate;
+    private final GenreRowMapper genreRowMapper;
 
     public FilmGenreRepository(JdbcTemplate jdbcTemplate, GenreRowMapper genreRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
+        this.genreRowMapper = genreRowMapper;
     }
 
 
@@ -31,14 +37,8 @@ public class FilmGenreRepository {
     }
 
     public List<Genre> getGenresForFilm(Long filmId) {
-        String sql = """
-                SELECT g.id, g.name
-                FROM genre g
-                JOIN film_genres fg ON g.id = fg.genre_id
-                WHERE fg.film_id = ?
-                ORDER BY g.id
-                """;
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new Genre(rs.getLong("id"), rs.getString("name")), filmId);
+
+        return jdbcTemplate.query(GET_GENRES_FOR_FILM, genreRowMapper, filmId);
     }
 
 }

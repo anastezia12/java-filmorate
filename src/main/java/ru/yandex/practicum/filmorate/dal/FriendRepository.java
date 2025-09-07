@@ -31,8 +31,6 @@ public class FriendRepository extends BaseRepository<Friend> {
 
     private static final String FIND_ALL_USER_FRIENDS =
             "SELECT * FROM friends WHERE user_id=? AND status_id = ?";
-    private static final String UPDATE_FRIENDSHIP_STATUS =
-            "UPDATE friends SET status_id = ? WHERE id = ?";
 
     public FriendRepository(JdbcTemplate jdbc, RowMapper<Friend> mapper) {
         super(jdbc, mapper);
@@ -51,30 +49,11 @@ public class FriendRepository extends BaseRepository<Friend> {
         return delete(DELETE_FRIEND_QUERY, friendship.get().getId());
     }
 
-    public List<Long> getAllFriendsIdFromUserConfirmed(Long userId) {
-        List<Friend> friends = findMany(FIND_ALL_USER_FRIENDS, userId, FriendshipStatus.CONFIRMED.getId());
+    public List<Long> getAllFriendsIdFromUser(Long userId, Long friendshipStatus) {
+        List<Friend> friends = findMany(FIND_ALL_USER_FRIENDS, userId, friendshipStatus);
         return friends.stream()
                 .map(Friend::getFriendId)
                 .toList();
-    }
-
-    public List<Long> getAllFriendsIdFromUserUnconfirmed(Long userId) {
-        List<Friend> friends = findMany(FIND_ALL_USER_FRIENDS, userId, FriendshipStatus.UNCONFIRMED.getId());
-        return friends.stream()
-                .map(Friend::getFriendId)
-                .toList();
-    }
-
-    public Optional<Friend> findFriendshipConfirmed(Long userId, Long friendId) {
-        return findOne(FIND_FRIENDSHIP_QUERY, userId, friendId, FriendshipStatus.CONFIRMED.getId());
-    }
-
-    public Optional<Friend> findFriendshipUNCONFIRMED(Long userId, Long friendId) {
-        return findOne(FIND_FRIENDSHIP_QUERY, userId, friendId, FriendshipStatus.UNCONFIRMED.getId());
-    }
-
-    public void updateFriendshipStatus(Long userId, Long friendId, Long statusId) {
-        update(UPDATE_FRIENDSHIP_STATUS, statusId, findFriendshipUNCONFIRMED(userId, friendId));
     }
 
     public List<Long> getCommonFriendsIds(Long userId1, Long userId2) {

@@ -77,6 +77,7 @@ public class FilmDbStorage implements FilmStorage {
                     .toList();
 
             saved.setGenres(genreForFilm);
+
             filmGenreRepository.addGenresToFilm(saved.getId(), genreIds);
         }
     }
@@ -112,8 +113,8 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> getModel() {
         List<Long> filmsId = filmRepository.findAll().stream().map(x -> x.getId()).toList();
         List<Film> films = new ArrayList<>();
-        for (Long i : filmsId) {
-            films.add(getById(i));
+        for (Long filmId : filmsId) {
+            films.add(getById(filmId));
         }
         return films;
     }

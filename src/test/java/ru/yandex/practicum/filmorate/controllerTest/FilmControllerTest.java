@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -22,7 +21,6 @@ public class FilmControllerTest {
     @Autowired
     private FilmController filmController;
     @Autowired
-    @Qualifier("filmDbStorage")
     private FilmStorage filmStorage;
 
     @BeforeAll

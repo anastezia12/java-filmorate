@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class UserControllerTest {
-    private User user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
+    private User user;
     @Autowired
     private UserController userController;
     @Autowired
@@ -26,6 +26,8 @@ public class UserControllerTest {
     @BeforeEach
     public void clear() {
         userStorage.clear();
+        user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
+
     }
 
     @Test
