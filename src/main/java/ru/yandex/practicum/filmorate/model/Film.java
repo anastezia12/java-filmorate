@@ -5,9 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.ToString;
 import ru.yandex.practicum.filmorate.anotations.AfterDate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +18,7 @@ import java.util.Set;
  * Film.
  */
 @Data
+@ToString
 public class Film {
     private Long id;
 
@@ -35,7 +38,8 @@ public class Film {
 
     private Set<Long> likes = new HashSet<>();
 
-    private List<Genre> genre;
+    private List<Genre> genres = new ArrayList<>();
 
-    private Rating rating;
+    @NotNull
+    private MPA mpa;
 }

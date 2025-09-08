@@ -18,4 +18,10 @@ public interface FilmStorage {
     List<Film> getModel();
 
     void clear();
+
+    void addLike(Long filmId, Long userId);
+
+    void deleteLike(Long filmId, Long userId);
+
+    List<Long> getAllLikes(Long filmId);
 }

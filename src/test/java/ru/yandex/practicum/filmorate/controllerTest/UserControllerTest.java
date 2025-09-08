@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
@@ -15,15 +16,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class UserControllerTest {
-    private User user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
+    private User user;
     @Autowired
     private UserController userController;
     @Autowired
+    @Qualifier("userDbStorage")
     private UserStorage userStorage;
 
     @BeforeEach
     public void clear() {
         userStorage.clear();
+        user = new User("new@email.com", "login", "name", LocalDate.now().minusDays(10));
+
     }
 
     @Test
@@ -50,7 +54,9 @@ public class UserControllerTest {
     @Test
     public void canReturnUsersWithMultipleUsers() {
         userController.addUser(user);
+        user.setLogin("LoginUser1");
         userController.addUser(user);
+        user.setLogin("loginUser2");
         userController.addUser(user);
         assertEquals(3, userController.getAll().size());
         assertTrue(userController.getAll().stream().allMatch(x -> x.getName().equals("name")));

@@ -2,13 +2,13 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,7 +22,7 @@ public class FilmService {
     private final UserService userService;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserService userService) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
         this.userService = userService;
     }
@@ -33,12 +33,11 @@ public class FilmService {
         }
         userService.userContainsInStorage(idOfUser);
 
-        Set<Long> likes = filmStorage.getById(idOfFilm).getLikes();
+        List<Long> likes = filmStorage.getAllLikes(idOfFilm);
         if (likes.contains(idOfUser)) {
             throw new IllegalArgumentException("User with id " + idOfUser + " already added like");
         }
-
-        likes.add(idOfUser);
+        filmStorage.addLike(idOfFilm, idOfUser);
     }
 
     public void deleteLike(Long idOfFilm, Long idOfUser) {
@@ -46,11 +45,11 @@ public class FilmService {
             throw new IllegalArgumentException("There are no such film with id " + idOfFilm);
         }
         userService.userContainsInStorage(idOfUser);
-        Set<Long> likes = filmStorage.getById(idOfFilm).getLikes();
+        List<Long> likes = filmStorage.getAllLikes(idOfFilm);
         if (!likes.contains(idOfUser)) {
             throw new IllegalArgumentException("User with id " + idOfUser + " do not have a like here");
         }
-        likes.remove(idOfUser);
+        filmStorage.deleteLike(idOfFilm, idOfUser);
     }
 
     public List<Film> mostPopular(Long count) {
